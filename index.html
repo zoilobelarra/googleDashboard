@@ -35,20 +35,26 @@
         --color-border-secondary: rgba(255,255,255,0.22);
       }
     }
+    html, body {
+      height: 100%;
+    }
     body {
       font-family: var(--font-sans);
       background: var(--color-background-tertiary);
       color: var(--color-text-primary);
-      padding: 20px;
-      min-height: 100vh;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
     }
-    .dashboard { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; gap: 12px; padding: 12px 0; }
-    .panel { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden; }
-    .panel-header { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+    #login-screen-wrap { flex: 1; display: flex; align-items: center; justify-content: center; }
+    #dashboard-screen { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+    .dashboard { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 12px; padding: 12px 0 0; min-height: 0; }
+    .panel { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden; display: flex; flex-direction: column; min-height: 0; }
+    .panel-header { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 0.5px solid var(--color-border-tertiary); flex-shrink: 0; }
     .panel-icon { width: 18px; height: 18px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; flex-shrink: 0; }
     .panel-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
     .panel-badge { margin-left: auto; font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 500; }
-    .panel-body { padding: 10px 14px; max-height: 240px; overflow-y: auto; }
+    .panel-body { padding: 10px 14px; overflow-y: auto; flex: 1; min-height: 0; }
     .loading-msg { font-size: 13px; color: var(--color-text-secondary); padding: 20px 0; text-align: center; }
     .error-msg { font-size: 12px; color: var(--color-text-danger); padding: 16px 0; text-align: center; }
     .email-item { display: flex; flex-direction: column; gap: 2px; padding: 8px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
@@ -74,7 +80,7 @@
     .doc-icon { width: 28px; height: 34px; border-radius: 3px; background: #E6F1FB; border: 0.5px solid #B5D4F4; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; color: #185FA5; flex-shrink: 0; }
     .doc-name { font-size: 12px; color: var(--color-text-primary); font-weight: 500; }
     .doc-date { font-size: 11px; color: var(--color-text-tertiary); }
-    .top-bar { display: flex; align-items: center; justify-content: space-between; padding: 0 0 10px; }
+    .top-bar { display: flex; align-items: center; justify-content: space-between; padding: 0 0 4px; flex-shrink: 0; }
     .top-bar-title { font-size: 16px; font-weight: 500; color: var(--color-text-primary); }
     .btn-signout { font-size: 12px; padding: 4px 10px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: transparent; color: var(--color-text-secondary); cursor: pointer; }
     .btn-signout:hover { background: var(--color-background-secondary); }
@@ -82,7 +88,7 @@
     .avatar { width: 28px; height: 28px; border-radius: 50%; background: #E6F1FB; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; color: #185FA5; flex-shrink: 0; overflow: hidden; }
     .avatar img { width: 100%; height: 100%; object-fit: cover; }
     .user-name { font-size: 12px; color: var(--color-text-secondary); }
-    #login-screen { text-align: center; padding: 60px 16px; max-width: 400px; margin: 0 auto; }
+    #login-screen { text-align: center; padding: 32px 16px; max-width: 400px; width: 100%; }
     #login-screen p { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 16px; }
     #login-screen h3 { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 8px; }
     .google-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); color: var(--color-text-primary); font-size: 14px; cursor: pointer; font-family: var(--font-sans); }
@@ -90,14 +96,15 @@
     .scope-list { font-size: 12px; color: var(--color-text-secondary); margin: 12px 0; line-height: 2; text-align: left; display: inline-block; }
     .btn-refresh { margin-left: auto; font-size: 11px; padding: 3px 8px; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); background: transparent; color: var(--color-text-tertiary); cursor: pointer; }
     .btn-refresh:hover { background: var(--color-background-secondary); color: var(--color-text-secondary); }
-    @media (max-width: 600px) {
-      .dashboard { grid-template-columns: 1fr; }
-      body { padding: 12px; }
+    @media (max-width: 700px) {
+      .dashboard { grid-template-columns: 1fr; grid-template-rows: repeat(4, minmax(220px, 1fr)); }
+      body { padding: 10px; }
     }
   </style>
 </head>
 <body>
 
+<div id="login-screen-wrap">
 <div id="login-screen">
   <h3>Google Workspace Dashboard</h3>
   <p>Inicia sesión con tu cuenta de Google para ver tu correo, calendario, tareas y documentos en una sola pantalla.</p>
@@ -113,8 +120,9 @@
     Iniciar sesión con Google
   </button>
 </div>
+</div>
 
-<div id="dashboard-screen" style="display:none; max-width: 900px; margin: 0 auto;">
+<div id="dashboard-screen" style="display:none;">
   <div class="top-bar">
     <div class="user-info">
       <div class="avatar" id="user-avatar"></div>
@@ -201,7 +209,7 @@ async function init() {
     google.accounts.oauth2.revoke(accessToken);
     accessToken = null;
     document.getElementById('dashboard-screen').style.display = 'none';
-    document.getElementById('login-screen').style.display = 'block';
+    document.getElementById('login-screen-wrap').style.display = 'flex';
   });
   document.querySelectorAll('.btn-refresh').forEach(btn => {
     btn.addEventListener('click', () => loadPanel(btn.dataset.panel));
@@ -215,8 +223,8 @@ async function gfetch(url) {
 }
 
 async function showDashboard() {
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('dashboard-screen').style.display = 'block';
+  document.getElementById('login-screen-wrap').style.display = 'none';
+  document.getElementById('dashboard-screen').style.display = 'flex';
   try {
     const me = await gfetch('https://www.googleapis.com/oauth2/v2/userinfo');
     document.getElementById('user-name-label').textContent = me.name || me.email;
