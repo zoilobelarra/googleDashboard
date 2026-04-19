@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Workspace Dashboard</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-background-primary: #ffffff;
+      --color-background-secondary: #f5f5f5;
+      --color-background-tertiary: #eeeeee;
+      --color-text-primary: #1a1a1a;
+      --color-text-secondary: #555555;
+      --color-text-tertiary: #888888;
+      --color-text-info: #185FA5;
+      --color-text-danger: #A32D2D;
+      --color-border-tertiary: rgba(0,0,0,0.12);
+      --color-border-secondary: rgba(0,0,0,0.22);
+      --border-radius-md: 8px;
+      --border-radius-lg: 12px;
+      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --color-background-primary: #1e1e1e;
+        --color-background-secondary: #2a2a2a;
+        --color-background-tertiary: #333333;
+        --color-text-primary: #f0f0f0;
+        --color-text-secondary: #aaaaaa;
+        --color-text-tertiary: #666666;
+        --color-text-info: #7ab8f5;
+        --color-text-danger: #f08080;
+        --color-border-tertiary: rgba(255,255,255,0.12);
+        --color-border-secondary: rgba(255,255,255,0.22);
+      }
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-background-tertiary);
+      color: var(--color-text-primary);
+      padding: 20px;
+      min-height: 100vh;
+    }
+    .dashboard { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; gap: 12px; padding: 12px 0; }
+    .panel { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden; }
+    .panel-header { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+    .panel-icon { width: 18px; height: 18px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; flex-shrink: 0; }
+    .panel-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+    .panel-badge { margin-left: auto; font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 500; }
+    .panel-body { padding: 10px 14px; max-height: 240px; overflow-y: auto; }
+    .loading-msg { font-size: 13px; color: var(--color-text-secondary); padding: 20px 0; text-align: center; }
+    .error-msg { font-size: 12px; color: var(--color-text-danger); padding: 16px 0; text-align: center; }
+    .email-item { display: flex; flex-direction: column; gap: 2px; padding: 8px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+    .email-item:last-child { border-bottom: none; }
+    .email-sender { font-size: 12px; font-weight: 500; color: var(--color-text-primary); }
+    .email-subject { font-size: 12px; color: var(--color-text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .email-date { font-size: 11px; color: var(--color-text-tertiary); }
+    .email-unread .email-sender { color: var(--color-text-info); }
+    .cal-item { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+    .cal-item:last-child { border-bottom: none; }
+    .cal-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; background: #185FA5; }
+    .cal-title { font-size: 12px; font-weight: 500; color: var(--color-text-primary); }
+    .cal-time { font-size: 11px; color: var(--color-text-tertiary); }
+    .task-item { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+    .task-item:last-child { border-bottom: none; }
+    .task-check { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid var(--color-border-secondary); flex-shrink: 0; cursor: pointer; }
+    .task-check.done { background: #1D9E75; border-color: #1D9E75; }
+    .task-label { font-size: 12px; color: var(--color-text-primary); }
+    .task-label.done { text-decoration: line-through; color: var(--color-text-tertiary); }
+    .doc-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 0.5px solid var(--color-border-tertiary); cursor: pointer; }
+    .doc-item:last-child { border-bottom: none; }
+    .doc-item:hover { background: var(--color-background-secondary); margin: 0 -14px; padding-left: 14px; padding-right: 14px; }
+    .doc-icon { width: 28px; height: 34px; border-radius: 3px; background: #E6F1FB; border: 0.5px solid #B5D4F4; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; color: #185FA5; flex-shrink: 0; }
+    .doc-name { font-size: 12px; color: var(--color-text-primary); font-weight: 500; }
+    .doc-date { font-size: 11px; color: var(--color-text-tertiary); }
+    .top-bar { display: flex; align-items: center; justify-content: space-between; padding: 0 0 10px; }
+    .top-bar-title { font-size: 16px; font-weight: 500; color: var(--color-text-primary); }
+    .btn-signout { font-size: 12px; padding: 4px 10px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: transparent; color: var(--color-text-secondary); cursor: pointer; }
+    .btn-signout:hover { background: var(--color-background-secondary); }
+    .user-info { display: flex; align-items: center; gap: 8px; }
+    .avatar { width: 28px; height: 28px; border-radius: 50%; background: #E6F1FB; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; color: #185FA5; flex-shrink: 0; overflow: hidden; }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .user-name { font-size: 12px; color: var(--color-text-secondary); }
+    #login-screen { text-align: center; padding: 60px 16px; max-width: 400px; margin: 0 auto; }
+    #login-screen p { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 16px; }
+    #login-screen h3 { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 8px; }
+    .google-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); color: var(--color-text-primary); font-size: 14px; cursor: pointer; font-family: var(--font-sans); }
+    .google-btn:hover { background: var(--color-background-secondary); }
+    .scope-list { font-size: 12px; color: var(--color-text-secondary); margin: 12px 0; line-height: 2; text-align: left; display: inline-block; }
+    .btn-refresh { margin-left: auto; font-size: 11px; padding: 3px 8px; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); background: transparent; color: var(--color-text-tertiary); cursor: pointer; }
+    .btn-refresh:hover { background: var(--color-background-secondary); color: var(--color-text-secondary); }
+    @media (max-width: 600px) {
+      .dashboard { grid-template-columns: 1fr; }
+      body { padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="login-screen">
+  <h3>Google Workspace Dashboard</h3>
+  <p>Inicia sesión con tu cuenta de Google para ver tu correo, calendario, tareas y documentos en una sola pantalla.</p>
+  <div class="scope-list">
+    ✉️ Gmail — correos recientes<br>
+    📅 Calendar — eventos de hoy y mañana<br>
+    ✅ Tasks — tus listas de tareas<br>
+    📄 Drive — documentos recientes
+  </div>
+  <br>
+  <button class="google-btn" id="btn-login">
+    <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+    Iniciar sesión con Google
+  </button>
+</div>
+
+<div id="dashboard-screen" style="display:none; max-width: 900px; margin: 0 auto;">
+  <div class="top-bar">
+    <div class="user-info">
+      <div class="avatar" id="user-avatar"></div>
+      <span class="user-name" id="user-name-label"></span>
+    </div>
+    <button class="btn-signout" id="btn-signout">Cerrar sesión</button>
+  </div>
+  <div class="dashboard">
+    <div class="panel" id="panel-gmail">
+      <div class="panel-header">
+        <div class="panel-icon" style="background:#FCE8E6;color:#C5221F;">M</div>
+        <span class="panel-title">Gmail</span>
+        <button class="btn-refresh" data-panel="gmail">↻</button>
+        <span class="panel-badge" style="background:#FCE8E6;color:#C5221F;" id="badge-gmail"></span>
+      </div>
+      <div class="panel-body" id="body-gmail"><p class="loading-msg">Cargando...</p></div>
+    </div>
+    <div class="panel" id="panel-calendar">
+      <div class="panel-header">
+        <div class="panel-icon" style="background:#E8F0FE;color:#1967D2;">C</div>
+        <span class="panel-title">Calendar</span>
+        <button class="btn-refresh" data-panel="calendar">↻</button>
+      </div>
+      <div class="panel-body" id="body-calendar"><p class="loading-msg">Cargando...</p></div>
+    </div>
+    <div class="panel" id="panel-tasks">
+      <div class="panel-header">
+        <div class="panel-icon" style="background:#E6F4EA;color:#137333;">T</div>
+        <span class="panel-title">Tasks</span>
+        <button class="btn-refresh" data-panel="tasks">↻</button>
+      </div>
+      <div class="panel-body" id="body-tasks"><p class="loading-msg">Cargando...</p></div>
+    </div>
+    <div class="panel" id="panel-docs">
+      <div class="panel-header">
+        <div class="panel-icon" style="background:#E8F0FE;color:#1967D2;">D</div>
+        <span class="panel-title">Docs recientes</span>
+        <button class="btn-refresh" data-panel="docs">↻</button>
+      </div>
+      <div class="panel-body" id="body-docs"><p class="loading-msg">Cargando...</p></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment-with-locales.min.js"></script>
+<script>
+const CLIENT_ID = '463579812884-mqmmn0elg4fpmne2tnkvb9j575v7gqiq.apps.googleusercontent.com';
+const SCOPES = [
+  'https://www.googleapis.com/auth/gmail.readonly',
+  'https://www.googleapis.com/auth/calendar.readonly',
+  'https://www.googleapis.com/auth/tasks.readonly',
+  'https://www.googleapis.com/auth/drive.readonly',
+  'https://www.googleapis.com/auth/userinfo.profile',
+  'https://www.googleapis.com/auth/userinfo.email'
+].join(' ');
+
+let tokenClient, accessToken = null;
+
+function loadGIS() {
+  return new Promise(resolve => {
+    if (window.google && window.google.accounts) { resolve(); return; }
+    const s = document.createElement('script');
+    s.src = 'https://accounts.google.com/gsi/client';
+    s.onload = resolve;
+    document.head.appendChild(s);
+  });
+}
+
+async function init() {
+  await loadGIS();
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID,
+    scope: SCOPES,
+    callback: async (resp) => {
+      if (resp.error) { alert('Error al iniciar sesión: ' + resp.error); return; }
+      accessToken = resp.access_token;
+      showDashboard();
+    }
+  });
+  document.getElementById('btn-login').addEventListener('click', () => {
+    tokenClient.requestAccessToken({ prompt: 'consent' });
+  });
+  document.getElementById('btn-signout').addEventListener('click', () => {
+    google.accounts.oauth2.revoke(accessToken);
+    accessToken = null;
+    document.getElementById('dashboard-screen').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'block';
+  });
+  document.querySelectorAll('.btn-refresh').forEach(btn => {
+    btn.addEventListener('click', () => loadPanel(btn.dataset.panel));
+  });
+}
+
+async function gfetch(url) {
+  const r = await fetch(url, { headers: { Authorization: 'Bearer ' + accessToken } });
+  if (!r.ok) throw new Error(r.status);
+  return r.json();
+}
+
+async function showDashboard() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('dashboard-screen').style.display = 'block';
+  try {
+    const me = await gfetch('https://www.googleapis.com/oauth2/v2/userinfo');
+    document.getElementById('user-name-label').textContent = me.name || me.email;
+    const av = document.getElementById('user-avatar');
+    if (me.picture) { av.innerHTML = `<img src="${me.picture}" alt="avatar">`; }
+    else { av.textContent = (me.name || me.email || 'U')[0].toUpperCase(); }
+  } catch(e) {}
+  loadPanel('gmail');
+  loadPanel('calendar');
+  loadPanel('tasks');
+  loadPanel('docs');
+}
+
+async function loadPanel(panel) {
+  const body = document.getElementById('body-' + panel);
+  body.innerHTML = '<p class="loading-msg">Cargando...</p>';
+  try {
+    if (panel === 'gmail') await loadGmail(body);
+    if (panel === 'calendar') await loadCalendar(body);
+    if (panel === 'tasks') await loadTasks(body);
+    if (panel === 'docs') await loadDocs(body);
+  } catch(e) {
+    body.innerHTML = `<p class="error-msg">Error al cargar (${e.message})</p>`;
+  }
+}
+
+function fmtDate(ms) {
+  if (!ms) return '';
+  return moment(ms).locale('es').fromNow();
+}
+
+async function loadGmail(body) {
+  const data = await gfetch('https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=8&labelIds=INBOX');
+  const msgs = data.messages || [];
+  if (!msgs.length) { body.innerHTML = '<p class="loading-msg">Sin mensajes</p>'; return; }
+  const details = await Promise.all(msgs.slice(0,8).map(m =>
+    gfetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${m.id}?format=metadata&metadataHeaders=From&metadataHeaders=Subject&metadataHeaders=Date`)
+  ));
+  const unread = details.filter(d => d.labelIds && d.labelIds.includes('UNREAD')).length;
+  const badge = document.getElementById('badge-gmail');
+  if (unread > 0) { badge.textContent = unread + ' nuevos'; badge.style.display = ''; }
+  else badge.style.display = 'none';
+  body.innerHTML = details.map(d => {
+    const h = (key) => (d.payload.headers.find(h => h.name === key) || {}).value || '';
+    const from = h('From').replace(/<.*>/, '').replace(/"/g,'').trim() || 'Sin remitente';
+    const subj = h('Subject') || '(sin asunto)';
+    const ts = parseInt(d.internalDate);
+    const isUnread = d.labelIds && d.labelIds.includes('UNREAD');
+    return `<div class="email-item ${isUnread?'email-unread':''}">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;">
+        <span class="email-sender">${escHtml(from.substring(0,28))}</span>
+        <span class="email-date">${fmtDate(ts)}</span>
+      </div>
+      <span class="email-subject">${escHtml(subj)}</span>
+    </div>`;
+  }).join('');
+}
+
+async function loadCalendar(body) {
+  const now = new Date();
+  const end = new Date(now); end.setDate(end.getDate() + 7);
+  const data = await gfetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${now.toISOString()}&timeMax=${end.toISOString()}&singleEvents=true&orderBy=startTime&maxResults=10`);
+  const items = data.items || [];
+  if (!items.length) { body.innerHTML = '<p class="loading-msg">Sin eventos próximos</p>'; return; }
+  body.innerHTML = items.map(ev => {
+    const start = ev.start.dateTime || ev.start.date;
+    const m = moment(start).locale('es');
+    const timeStr = ev.start.dateTime ? m.format('ddd D, HH:mm') : m.format('ddd D MMM');
+    const color = ev.colorId ? ['#185FA5','#E37400','#0F6E56','#A32D2D','#534AB7','#993556'][parseInt(ev.colorId)%6] : '#185FA5';
+    return `<div class="cal-item">
+      <div class="cal-dot" style="background:${color}"></div>
+      <div>
+        <div class="cal-title">${escHtml((ev.summary||'Sin título').substring(0,40))}</div>
+        <div class="cal-time">${timeStr}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function loadTasks(body) {
+  const listsData = await gfetch('https://tasks.googleapis.com/tasks/v1/users/@me/lists?maxResults=5');
+  const lists = listsData.items || [];
+  if (!lists.length) { body.innerHTML = '<p class="loading-msg">Sin listas de tareas</p>'; return; }
+  const allTasks = await Promise.all(lists.slice(0,3).map(l =>
+    gfetch(`https://tasks.googleapis.com/tasks/v1/lists/${l.id}/tasks?maxResults=6&showHidden=false`)
+      .then(d => (d.items || []).map(t => ({...t, _list: l.title})))
+  ));
+  const flat = allTasks.flat().slice(0,12);
+  if (!flat.length) { body.innerHTML = '<p class="loading-msg">Sin tareas pendientes</p>'; return; }
+  body.innerHTML = flat.map((t,i) => {
+    const done = t.status === 'completed';
+    return `<div class="task-item">
+      <div class="task-check ${done?'done':''}" id="tc-${i}" onclick="toggleTask(${i})"></div>
+      <span class="task-label ${done?'done':''}">${escHtml((t.title||'Sin título').substring(0,45))}</span>
+    </div>`;
+  }).join('');
+}
+
+function toggleTask(i) {
+  const check = document.getElementById('tc-'+i);
+  const label = check.nextElementSibling;
+  check.classList.toggle('done');
+  label.classList.toggle('done');
+}
+
+async function loadDocs(body) {
+  const data = await gfetch("https://www.googleapis.com/drive/v3/files?q=mimeType='application/vnd.google-apps.document'&orderBy=viewedByMeTime desc&pageSize=8&fields=files(id,name,modifiedTime,webViewLink)");
+  const files = data.files || [];
+  if (!files.length) { body.innerHTML = '<p class="loading-msg">Sin documentos recientes</p>'; return; }
+  body.innerHTML = files.map(f => `<div class="doc-item" onclick="window.open('${f.webViewLink}','_blank')">
+    <div class="doc-icon">Doc</div>
+    <div style="min-width:0;">
+      <div class="doc-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escHtml(f.name.substring(0,40))}</div>
+      <div class="doc-date">${fmtDate(new Date(f.modifiedTime).getTime())}</div>
+    </div>
+  </div>`).join('');
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+init();
+</script>
+</body>
+</html>
