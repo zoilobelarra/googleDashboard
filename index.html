@@ -7,166 +7,202 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --color-background-primary: #ffffff;
-      --color-background-secondary: #f5f5f5;
-      --color-background-tertiary: #eeeeee;
-      --color-text-primary: #1a1a1a;
-      --color-text-secondary: #555555;
-      --color-text-tertiary: #888888;
-      --color-text-info: #185FA5;
-      --color-text-danger: #A32D2D;
-      --color-border-tertiary: rgba(0,0,0,0.12);
-      --color-border-secondary: rgba(0,0,0,0.22);
-      --border-radius-md: 8px;
-      --border-radius-lg: 12px;
-      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --bg1: #ffffff; --bg2: #f5f5f5; --bg3: #eeeeee;
+      --tx1: #1a1a1a; --tx2: #555555; --tx3: #888888;
+      --info: #185FA5; --danger: #A32D2D; --success: #1D9E75;
+      --bd3: rgba(0,0,0,0.12); --bd2: rgba(0,0,0,0.22);
+      --r-md: 8px; --r-lg: 12px;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
     @media (prefers-color-scheme: dark) {
       :root {
-        --color-background-primary: #1e1e1e;
-        --color-background-secondary: #2a2a2a;
-        --color-background-tertiary: #333333;
-        --color-text-primary: #f0f0f0;
-        --color-text-secondary: #aaaaaa;
-        --color-text-tertiary: #666666;
-        --color-text-info: #7ab8f5;
-        --color-text-danger: #f08080;
-        --color-border-tertiary: rgba(255,255,255,0.12);
-        --color-border-secondary: rgba(255,255,255,0.22);
+        --bg1: #1e1e1e; --bg2: #2a2a2a; --bg3: #333333;
+        --tx1: #f0f0f0; --tx2: #aaaaaa; --tx3: #666666;
+        --info: #7ab8f5; --danger: #f08080;
+        --bd3: rgba(255,255,255,0.12); --bd2: rgba(255,255,255,0.22);
       }
     }
-    html, body {
-      height: 100%;
-    }
-    body {
-      font-family: var(--font-sans);
-      background: var(--color-background-tertiary);
-      color: var(--color-text-primary);
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-    }
-    #login-screen-wrap { flex: 1; display: flex; align-items: center; justify-content: center; }
-    #dashboard-screen { flex: 1; display: flex; flex-direction: column; min-height: 0; }
-    .dashboard { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 12px; padding: 12px 0 0; min-height: 0; }
-    .panel { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden; display: flex; flex-direction: column; min-height: 0; }
-    .panel-header { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 0.5px solid var(--color-border-tertiary); flex-shrink: 0; }
-    .panel-icon { width: 18px; height: 18px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; flex-shrink: 0; }
-    .panel-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
-    .panel-badge { margin-left: auto; font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 500; }
-    .panel-body { padding: 10px 14px; overflow-y: auto; flex: 1; min-height: 0; }
-    .loading-msg { font-size: 13px; color: var(--color-text-secondary); padding: 20px 0; text-align: center; }
-    .error-msg { font-size: 12px; color: var(--color-text-danger); padding: 16px 0; text-align: center; }
-    .email-item { display: flex; flex-direction: column; gap: 2px; padding: 8px 0; border-bottom: 0.5px solid var(--color-border-tertiary); cursor: pointer; }
-    .email-item:last-child { border-bottom: none; }
-    .email-item:hover { background: var(--color-background-secondary); margin: 0 -14px; padding-left: 14px; padding-right: 14px; }
-    .email-sender { font-size: 12px; font-weight: 500; color: var(--color-text-primary); }
-    .email-subject { font-size: 12px; color: var(--color-text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .email-date { font-size: 11px; color: var(--color-text-tertiary); }
-    .email-unread .email-sender { color: var(--color-text-info); }
-    .cal-item { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 0.5px solid var(--color-border-tertiary); cursor: pointer; }
-    .cal-item:last-child { border-bottom: none; }
-    .cal-item:hover { background: var(--color-background-secondary); margin: 0 -14px; padding-left: 14px; padding-right: 14px; }
-    .cal-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; background: #185FA5; }
-    .cal-title { font-size: 12px; font-weight: 500; color: var(--color-text-primary); }
-    .cal-time { font-size: 11px; color: var(--color-text-tertiary); }
-    .task-item { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
-    .task-item:last-child { border-bottom: none; }
-    .task-check { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid var(--color-border-secondary); flex-shrink: 0; cursor: pointer; }
-    .task-check.done { background: #1D9E75; border-color: #1D9E75; }
-    .task-label { font-size: 12px; color: var(--color-text-primary); }
-    .task-label.done { text-decoration: line-through; color: var(--color-text-tertiary); }
-    .doc-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 0.5px solid var(--color-border-tertiary); cursor: pointer; }
-    .doc-item:last-child { border-bottom: none; }
-    .doc-item:hover { background: var(--color-background-secondary); margin: 0 -14px; padding-left: 14px; padding-right: 14px; }
-    .doc-icon { width: 28px; height: 34px; border-radius: 3px; background: #E6F1FB; border: 0.5px solid #B5D4F4; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; color: #185FA5; flex-shrink: 0; }
-    .doc-name { font-size: 12px; color: var(--color-text-primary); font-weight: 500; }
-    .doc-date { font-size: 11px; color: var(--color-text-tertiary); }
-    .top-bar { display: flex; align-items: center; justify-content: space-between; padding: 0 0 4px; flex-shrink: 0; }
-    .top-bar-title { font-size: 16px; font-weight: 500; color: var(--color-text-primary); }
-    .btn-signout { font-size: 12px; padding: 4px 10px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: transparent; color: var(--color-text-secondary); cursor: pointer; }
-    .btn-signout:hover { background: var(--color-background-secondary); }
+    html, body { height: 100%; }
+    body { font-family: var(--font); background: var(--bg3); color: var(--tx1); padding: 16px; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* LOGIN */
+    #login-wrap { flex: 1; display: flex; align-items: center; justify-content: center; }
+    #login-box { text-align: center; padding: 32px 24px; max-width: 400px; width: 100%; background: var(--bg1); border: 0.5px solid var(--bd3); border-radius: var(--r-lg); }
+    #login-box h3 { font-size: 16px; font-weight: 500; margin-bottom: 8px; }
+    #login-box p { font-size: 13px; color: var(--tx2); margin-bottom: 16px; }
+    .scope-list { font-size: 12px; color: var(--tx2); margin: 12px 0; line-height: 2.2; text-align: left; display: inline-block; }
+    .google-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border: 0.5px solid var(--bd2); border-radius: var(--r-md); background: var(--bg1); color: var(--tx1); font-size: 14px; cursor: pointer; font-family: var(--font); margin-top: 8px; }
+    .google-btn:hover { background: var(--bg2); }
+
+    /* DASHBOARD */
+    #dash { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+    .top-bar { display: flex; align-items: center; justify-content: space-between; padding-bottom: 8px; flex-shrink: 0; }
     .user-info { display: flex; align-items: center; gap: 8px; }
-    .avatar { width: 28px; height: 28px; border-radius: 50%; background: #E6F1FB; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; color: #185FA5; flex-shrink: 0; overflow: hidden; }
+    .avatar { width: 28px; height: 28px; border-radius: 50%; background: #E6F1FB; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; color: var(--info); flex-shrink: 0; overflow: hidden; }
     .avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .user-name { font-size: 12px; color: var(--color-text-secondary); }
-    #login-screen { text-align: center; padding: 32px 16px; max-width: 400px; width: 100%; }
-    #login-screen p { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 16px; }
-    #login-screen h3 { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 8px; }
-    .google-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); color: var(--color-text-primary); font-size: 14px; cursor: pointer; font-family: var(--font-sans); }
-    .google-btn:hover { background: var(--color-background-secondary); }
-    .scope-list { font-size: 12px; color: var(--color-text-secondary); margin: 12px 0; line-height: 2; text-align: left; display: inline-block; }
-    .btn-refresh { margin-left: auto; font-size: 11px; padding: 3px 8px; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); background: transparent; color: var(--color-text-tertiary); cursor: pointer; }
-    .btn-refresh:hover { background: var(--color-background-secondary); color: var(--color-text-secondary); }
+    .user-name { font-size: 12px; color: var(--tx2); }
+    .btn-sm { font-size: 12px; padding: 4px 10px; border: 0.5px solid var(--bd2); border-radius: var(--r-md); background: transparent; color: var(--tx2); cursor: pointer; }
+    .btn-sm:hover { background: var(--bg2); }
+
+    /* GRID */
+    .grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 12px; min-height: 0; }
+    .panel { background: var(--bg1); border: 0.5px solid var(--bd3); border-radius: var(--r-lg); display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+    .ph { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-bottom: 0.5px solid var(--bd3); flex-shrink: 0; }
+    .picon { width: 18px; height: 18px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; flex-shrink: 0; }
+    .ptitle { font-size: 13px; font-weight: 500; }
+    .pbadge { font-size: 11px; padding: 2px 7px; border-radius: 10px; font-weight: 500; }
+    .btn-ref { margin-left: auto; font-size: 11px; padding: 2px 7px; border: 0.5px solid var(--bd3); border-radius: var(--r-md); background: transparent; color: var(--tx3); cursor: pointer; }
+    .btn-ref:hover { background: var(--bg2); }
+    .pb { flex: 1; overflow-y: auto; min-height: 0; }
+
+    /* ROWS */
+    .row { display: flex; align-items: flex-start; gap: 10px; padding: 8px 12px; border-bottom: 0.5px solid var(--bd3); cursor: pointer; }
+    .row:last-child { border-bottom: none; }
+    .row:hover { background: var(--bg2); }
+    .row-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .row-title { font-size: 12px; font-weight: 500; color: var(--tx1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .row-sub { font-size: 11px; color: var(--tx2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .row-meta { font-size: 11px; color: var(--tx3); flex-shrink: 0; padding-top: 1px; }
+    .unread .row-title { color: var(--info); font-weight: 600; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+    .doc-icon { width: 26px; height: 32px; border-radius: 3px; background: #E6F1FB; border: 0.5px solid #B5D4F4; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; color: var(--info); flex-shrink: 0; }
+    .task-row { display: flex; align-items: flex-start; gap: 10px; padding: 8px 12px; border-bottom: 0.5px solid var(--bd3); }
+    .task-row:last-child { border-bottom: none; }
+    .task-check { width: 15px; height: 15px; border-radius: 50%; border: 1.5px solid var(--bd2); flex-shrink: 0; cursor: pointer; margin-top: 2px; }
+    .task-check.done { background: var(--success); border-color: var(--success); }
+    .task-label { font-size: 12px; color: var(--tx1); }
+    .task-label.done { text-decoration: line-through; color: var(--tx3); }
+    .list-header { padding: 5px 12px 3px; font-size: 11px; font-weight: 500; color: var(--tx3); text-transform: uppercase; letter-spacing: .05em; border-bottom: 0.5px solid var(--bd3); background: var(--bg2); }
+
+    /* LOAD MORE */
+    .load-more { text-align: center; padding: 8px; border-top: 0.5px solid var(--bd3); flex-shrink: 0; }
+    .load-more button { font-size: 12px; padding: 4px 14px; border: 0.5px solid var(--bd2); border-radius: var(--r-md); background: transparent; color: var(--tx2); cursor: pointer; }
+    .load-more button:hover { background: var(--bg2); }
+    .load-more button:disabled { opacity: 0.4; cursor: default; }
+
+    /* DRAWER */
+    #drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.28); z-index: 100; display: none; }
+    #drawer-overlay.open { display: block; }
+    #drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(600px, 100vw); background: var(--bg1); border-left: 0.5px solid var(--bd3); z-index: 101; display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.22s cubic-bezier(.4,0,.2,1); }
+    #drawer.open { transform: translateX(0); }
+    .dh { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 0.5px solid var(--bd3); flex-shrink: 0; }
+    .dh-title { font-size: 14px; font-weight: 500; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .dh-close { width: 28px; height: 28px; border-radius: var(--r-md); border: 0.5px solid var(--bd2); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; line-height: 1; color: var(--tx2); flex-shrink: 0; }
+    .dh-close:hover { background: var(--bg2); }
+    #drawer-body { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; }
+    .meta-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+    .meta-chip { font-size: 11px; padding: 3px 9px; border-radius: 10px; background: var(--bg2); color: var(--tx2); border: 0.5px solid var(--bd3); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .open-ext { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; padding: 5px 12px; border: 0.5px solid var(--bd2); border-radius: var(--r-md); background: transparent; color: var(--info); cursor: pointer; text-decoration: none; margin-bottom: 12px; align-self: flex-start; }
+    .open-ext:hover { background: var(--bg2); }
+    .email-body { font-size: 13px; line-height: 1.75; color: var(--tx1); white-space: pre-wrap; word-break: break-word; flex: 1; }
+    .email-iframe { flex: 1; border: none; border-radius: var(--r-md); min-height: 300px; background: white; }
+    .event-block strong { display: block; font-size: 11px; font-weight: 500; color: var(--tx3); text-transform: uppercase; letter-spacing: .04em; margin-top: 14px; margin-bottom: 3px; }
+    .event-block p { font-size: 13px; color: var(--tx1); line-height: 1.6; }
+    .doc-iframe { flex: 1; border: none; border-radius: var(--r-md); min-height: 400px; }
+
+    /* MISC */
+    .msg { font-size: 13px; color: var(--tx2); padding: 20px 12px; text-align: center; }
+    .err { font-size: 12px; color: var(--danger); padding: 16px 12px; text-align: center; }
+
     @media (max-width: 700px) {
-      .dashboard { grid-template-columns: 1fr; grid-template-rows: repeat(4, minmax(220px, 1fr)); }
+      .grid { grid-template-columns: 1fr; grid-template-rows: repeat(4, minmax(200px,1fr)); }
       body { padding: 10px; }
+      #drawer { width: 100vw; }
     }
   </style>
 </head>
 <body>
 
-<div id="login-screen-wrap">
-<div id="login-screen">
-  <h3>Google Workspace Dashboard</h3>
-  <p>Inicia sesión con tu cuenta de Google para ver tu correo, calendario, tareas y documentos en una sola pantalla.</p>
-  <div class="scope-list">
-    ✉️ Gmail — correos recientes<br>
-    📅 Calendar — eventos de hoy y mañana<br>
-    ✅ Tasks — tus listas de tareas<br>
-    📄 Drive — documentos recientes
+<!-- LOGIN -->
+<div id="login-wrap">
+  <div id="login-box">
+    <h3>Google Workspace Dashboard</h3>
+    <p>Inicia sesión para ver tu correo, calendario, tareas y documentos en una sola pantalla.</p>
+    <div class="scope-list">
+      ✉️ Gmail &nbsp;— correos recientes<br>
+      📅 Calendar &nbsp;— próximos eventos<br>
+      ✅ Tasks &nbsp;— listas de tareas<br>
+      📄 Drive &nbsp;— documentos recientes
+    </div><br>
+    <button class="google-btn" id="btn-login">
+      <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Iniciar sesión con Google
+    </button>
   </div>
-  <br>
-  <button class="google-btn" id="btn-login">
-    <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-    Iniciar sesión con Google
-  </button>
-</div>
 </div>
 
-<div id="dashboard-screen" style="display:none;">
+<!-- DASHBOARD -->
+<div id="dash" style="display:none;">
   <div class="top-bar">
     <div class="user-info">
-      <div class="avatar" id="user-avatar"></div>
-      <span class="user-name" id="user-name-label"></span>
+      <div class="avatar" id="u-av"></div>
+      <span class="user-name" id="u-name"></span>
     </div>
-    <button class="btn-signout" id="btn-signout">Cerrar sesión</button>
+    <button class="btn-sm" id="btn-out">Cerrar sesión</button>
   </div>
-  <div class="dashboard">
-    <div class="panel" id="panel-gmail">
-      <div class="panel-header">
-        <div class="panel-icon" style="background:#FCE8E6;color:#C5221F;">M</div>
-        <span class="panel-title">Gmail</span>
-        <button class="btn-refresh" data-panel="gmail">↻</button>
-        <span class="panel-badge" style="background:#FCE8E6;color:#C5221F;" id="badge-gmail"></span>
+  <div class="grid">
+
+    <!-- GMAIL -->
+    <div class="panel">
+      <div class="ph">
+        <div class="picon" style="background:#FCE8E6;color:#C5221F;">M</div>
+        <span class="ptitle">Gmail</span>
+        <span class="pbadge" style="background:#FCE8E6;color:#C5221F;display:none;" id="g-badge"></span>
+        <button class="btn-ref" onclick="reloadGmail()">↻</button>
       </div>
-      <div class="panel-body" id="body-gmail"><p class="loading-msg">Cargando...</p></div>
-    </div>
-    <div class="panel" id="panel-calendar">
-      <div class="panel-header">
-        <div class="panel-icon" style="background:#E8F0FE;color:#1967D2;">C</div>
-        <span class="panel-title">Calendar</span>
-        <button class="btn-refresh" data-panel="calendar">↻</button>
+      <div class="pb" id="g-list"></div>
+      <div class="load-more" id="g-more" style="display:none;">
+        <button id="g-more-btn" onclick="loadMoreGmail()">Cargar más correos</button>
       </div>
-      <div class="panel-body" id="body-calendar"><p class="loading-msg">Cargando...</p></div>
     </div>
-    <div class="panel" id="panel-tasks">
-      <div class="panel-header">
-        <div class="panel-icon" style="background:#E6F4EA;color:#137333;">T</div>
-        <span class="panel-title">Tasks</span>
-        <button class="btn-refresh" data-panel="tasks">↻</button>
+
+    <!-- CALENDAR -->
+    <div class="panel">
+      <div class="ph">
+        <div class="picon" style="background:#E8F0FE;color:#1967D2;">C</div>
+        <span class="ptitle">Calendar</span>
+        <button class="btn-ref" onclick="reloadCalendar()">↻</button>
       </div>
-      <div class="panel-body" id="body-tasks"><p class="loading-msg">Cargando...</p></div>
-    </div>
-    <div class="panel" id="panel-docs">
-      <div class="panel-header">
-        <div class="panel-icon" style="background:#E8F0FE;color:#1967D2;">D</div>
-        <span class="panel-title">Docs recientes</span>
-        <button class="btn-refresh" data-panel="docs">↻</button>
+      <div class="pb" id="c-list"></div>
+      <div class="load-more" id="c-more" style="display:none;">
+        <button id="c-more-btn" onclick="loadMoreCalendar()">Cargar más eventos</button>
       </div>
-      <div class="panel-body" id="body-docs"><p class="loading-msg">Cargando...</p></div>
     </div>
+
+    <!-- TASKS -->
+    <div class="panel">
+      <div class="ph">
+        <div class="picon" style="background:#E6F4EA;color:#137333;">T</div>
+        <span class="ptitle">Tasks</span>
+        <button class="btn-ref" onclick="reloadTasks()">↻</button>
+      </div>
+      <div class="pb" id="t-list"></div>
+    </div>
+
+    <!-- DOCS -->
+    <div class="panel">
+      <div class="ph">
+        <div class="picon" style="background:#E8F0FE;color:#1967D2;">D</div>
+        <span class="ptitle">Docs recientes</span>
+        <button class="btn-ref" onclick="reloadDocs()">↻</button>
+      </div>
+      <div class="pb" id="d-list"></div>
+      <div class="load-more" id="d-more" style="display:none;">
+        <button id="d-more-btn" onclick="loadMoreDocs()">Cargar más documentos</button>
+      </div>
+    </div>
+
   </div>
+</div>
+
+<!-- DRAWER -->
+<div id="drawer-overlay" onclick="closeDrawer()"></div>
+<div id="drawer">
+  <div class="dh">
+    <span class="dh-title" id="drawer-title"></span>
+    <button class="dh-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div id="drawer-body"></div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment-with-locales.min.js"></script>
@@ -181,14 +217,17 @@ const SCOPES = [
   'https://www.googleapis.com/auth/userinfo.email'
 ].join(' ');
 
-let tokenClient, accessToken = null;
+let token = null, tokenClient;
+const gmailState = { items: [], nextToken: null, loading: false };
+const calState   = { items: [], nextToken: null, loading: false };
+const docsState  = { items: [], nextToken: null, loading: false };
 
 function loadGIS() {
-  return new Promise(resolve => {
-    if (window.google && window.google.accounts) { resolve(); return; }
+  return new Promise(r => {
+    if (window.google?.accounts) { r(); return; }
     const s = document.createElement('script');
     s.src = 'https://accounts.google.com/gsi/client';
-    s.onload = resolve;
+    s.onload = r;
     document.head.appendChild(s);
   });
 }
@@ -196,159 +235,334 @@ function loadGIS() {
 async function init() {
   await loadGIS();
   tokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: CLIENT_ID,
-    scope: SCOPES,
-    callback: async (resp) => {
-      if (resp.error) { alert('Error al iniciar sesión: ' + resp.error); return; }
-      accessToken = resp.access_token;
-      showDashboard();
+    client_id: CLIENT_ID, scope: SCOPES,
+    callback: async resp => {
+      if (resp.error) { alert('Error: ' + resp.error); return; }
+      token = resp.access_token;
+      showDash();
     }
   });
-  document.getElementById('btn-login').addEventListener('click', () => {
-    tokenClient.requestAccessToken({ prompt: 'consent' });
-  });
-  document.getElementById('btn-signout').addEventListener('click', () => {
-    google.accounts.oauth2.revoke(accessToken);
-    accessToken = null;
-    document.getElementById('dashboard-screen').style.display = 'none';
-    document.getElementById('login-screen-wrap').style.display = 'flex';
-  });
-  document.querySelectorAll('.btn-refresh').forEach(btn => {
-    btn.addEventListener('click', () => loadPanel(btn.dataset.panel));
-  });
+  document.getElementById('btn-login').onclick = () => tokenClient.requestAccessToken({ prompt: 'consent' });
+  document.getElementById('btn-out').onclick = () => {
+    google.accounts.oauth2.revoke(token);
+    token = null;
+    document.getElementById('dash').style.display = 'none';
+    document.getElementById('login-wrap').style.display = 'flex';
+  };
 }
 
 async function gfetch(url) {
-  const r = await fetch(url, { headers: { Authorization: 'Bearer ' + accessToken } });
+  const r = await fetch(url, { headers: { Authorization: 'Bearer ' + token } });
   if (!r.ok) throw new Error(r.status);
   return r.json();
 }
 
-async function showDashboard() {
-  document.getElementById('login-screen-wrap').style.display = 'none';
-  document.getElementById('dashboard-screen').style.display = 'flex';
+async function showDash() {
+  document.getElementById('login-wrap').style.display = 'none';
+  document.getElementById('dash').style.display = 'flex';
   try {
     const me = await gfetch('https://www.googleapis.com/oauth2/v2/userinfo');
-    document.getElementById('user-name-label').textContent = me.name || me.email;
-    const av = document.getElementById('user-avatar');
-    if (me.picture) { av.innerHTML = `<img src="${me.picture}" alt="avatar">`; }
-    else { av.textContent = (me.name || me.email || 'U')[0].toUpperCase(); }
+    document.getElementById('u-name').textContent = me.name || me.email;
+    const av = document.getElementById('u-av');
+    if (me.picture) av.innerHTML = `<img src="${me.picture}" alt="">`;
+    else av.textContent = (me.name || 'U')[0];
   } catch(e) {}
-  loadPanel('gmail');
-  loadPanel('calendar');
-  loadPanel('tasks');
-  loadPanel('docs');
+  reloadGmail(); reloadCalendar(); reloadTasks(); reloadDocs();
 }
 
-async function loadPanel(panel) {
-  const body = document.getElementById('body-' + panel);
-  body.innerHTML = '<p class="loading-msg">Cargando...</p>';
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function ago(ms) { return ms ? moment(ms).locale('es').fromNow() : ''; }
+
+/* ── DRAWER ── */
+function openDrawer(title, bodyFn) {
+  document.getElementById('drawer-title').textContent = title;
+  document.getElementById('drawer-body').innerHTML = '<p class="msg">Cargando...</p>';
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('drawer-overlay').classList.add('open');
+  bodyFn();
+}
+function closeDrawer() {
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawer-overlay').classList.remove('open');
+  setTimeout(() => { document.getElementById('drawer-body').innerHTML = ''; }, 250);
+}
+function setDrawerBody(html) { document.getElementById('drawer-body').innerHTML = html; }
+
+/* ── GMAIL ── */
+async function reloadGmail() {
+  gmailState.items = []; gmailState.nextToken = null;
+  document.getElementById('g-list').innerHTML = '<p class="msg">Cargando...</p>';
+  document.getElementById('g-more').style.display = 'none';
+  await fetchGmail();
+}
+async function fetchGmail() {
+  if (gmailState.loading) return;
+  gmailState.loading = true;
+  const btn = document.getElementById('g-more-btn');
+  if (btn) btn.disabled = true;
   try {
-    if (panel === 'gmail') await loadGmail(body);
-    if (panel === 'calendar') await loadCalendar(body);
-    if (panel === 'tasks') await loadTasks(body);
-    if (panel === 'docs') await loadDocs(body);
+    let url = 'https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=15&labelIds=INBOX';
+    if (gmailState.nextToken) url += '&pageToken=' + gmailState.nextToken;
+    const data = await gfetch(url);
+    gmailState.nextToken = data.nextPageToken || null;
+    const details = await Promise.all((data.messages || []).map(m =>
+      gfetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${m.id}?format=metadata&metadataHeaders=From&metadataHeaders=Subject`)
+    ));
+    gmailState.items.push(...details);
+    renderGmail();
+    const unread = gmailState.items.filter(d => d.labelIds?.includes('UNREAD')).length;
+    const badge = document.getElementById('g-badge');
+    if (unread > 0) { badge.textContent = unread + ' nuevos'; badge.style.display = ''; }
+    else badge.style.display = 'none';
+    document.getElementById('g-more').style.display = gmailState.nextToken ? 'block' : 'none';
+    if (btn) btn.disabled = false;
   } catch(e) {
-    body.innerHTML = `<p class="error-msg">Error al cargar (${e.message})</p>`;
+    document.getElementById('g-list').innerHTML = `<p class="err">Error (${e.message})</p>`;
+  }
+  gmailState.loading = false;
+}
+async function loadMoreGmail() { await fetchGmail(); }
+
+function renderGmail() {
+  const el = document.getElementById('g-list');
+  if (!gmailState.items.length) { el.innerHTML = '<p class="msg">Sin mensajes</p>'; return; }
+  el.innerHTML = gmailState.items.map(d => {
+    const hdr = k => (d.payload?.headers?.find(h => h.name === k) || {}).value || '';
+    const from = hdr('From').replace(/<.*>/, '').replace(/"/g,'').trim() || 'Sin remitente';
+    const subj = hdr('Subject') || '(sin asunto)';
+    const unread = d.labelIds?.includes('UNREAD');
+    return `<div class="row ${unread?'unread':''}" onclick="openEmail('${d.id}')">
+      <div class="row-main">
+        <div class="row-title">${esc(from.substring(0,36))}</div>
+        <div class="row-sub">${esc(subj)}</div>
+      </div>
+      <span class="row-meta">${ago(parseInt(d.internalDate))}</span>
+    </div>`;
+  }).join('');
+}
+
+async function openEmail(id) {
+  openDrawer('Cargando correo...', async () => {
+    try {
+      const d = await gfetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${id}?format=full`);
+      const hdr = k => (d.payload?.headers?.find(h => h.name === k) || {}).value || '';
+      const subj = hdr('Subject') || '(sin asunto)';
+      const from = hdr('From') || '';
+      const to   = hdr('To') || '';
+      const date = hdr('Date') || '';
+      document.getElementById('drawer-title').textContent = subj;
+
+      let html = '', plain = '';
+      function walk(part) {
+        if (!part) return;
+        if (part.mimeType === 'text/html'  && part.body?.data) html  = atob(part.body.data.replace(/-/g,'+').replace(/_/g,'/'));
+        if (part.mimeType === 'text/plain' && part.body?.data) plain = atob(part.body.data.replace(/-/g,'+').replace(/_/g,'/'));
+        (part.parts || []).forEach(walk);
+      }
+      walk(d.payload);
+
+      const gmailUrl = `https://mail.google.com/mail/u/0/#inbox/${id}`;
+      const meta = `<div class="meta-row">
+        <span class="meta-chip">De: ${esc(from)}</span>
+        <span class="meta-chip">Para: ${esc(to)}</span>
+        <span class="meta-chip">${esc(date)}</span>
+      </div>
+      <a href="${gmailUrl}" target="_blank" class="open-ext">Abrir en Gmail ↗</a>`;
+
+      if (html) {
+        const blob = new Blob([html], {type:'text/html'});
+        const burl = URL.createObjectURL(blob);
+        setDrawerBody(`${meta}<iframe src="${burl}" class="email-iframe" style="flex:1;height:0;min-height:300px;"></iframe>`);
+      } else {
+        setDrawerBody(`${meta}<div class="email-body">${esc(plain || '(sin contenido)')}</div>`);
+      }
+    } catch(e) {
+      setDrawerBody(`<p class="err">Error cargando correo (${e.message})</p>`);
+    }
+  });
+}
+
+/* ── CALENDAR ── */
+async function reloadCalendar() {
+  calState.items = []; calState.nextToken = null;
+  document.getElementById('c-list').innerHTML = '<p class="msg">Cargando...</p>';
+  document.getElementById('c-more').style.display = 'none';
+  await fetchCalendar();
+}
+async function fetchCalendar() {
+  if (calState.loading) return;
+  calState.loading = true;
+  const btn = document.getElementById('c-more-btn');
+  if (btn) btn.disabled = true;
+  try {
+    const now = new Date();
+    const end = new Date(now); end.setMonth(end.getMonth() + 3);
+    let url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?singleEvents=true&orderBy=startTime&maxResults=20&timeMin=${now.toISOString()}&timeMax=${end.toISOString()}`;
+    if (calState.nextToken) url += '&pageToken=' + calState.nextToken;
+    const data = await gfetch(url);
+    calState.nextToken = data.nextPageToken || null;
+    calState.items.push(...(data.items || []));
+    renderCalendar();
+    document.getElementById('c-more').style.display = calState.nextToken ? 'block' : 'none';
+    if (btn) btn.disabled = false;
+  } catch(e) {
+    document.getElementById('c-list').innerHTML = `<p class="err">Error (${e.message})</p>`;
+  }
+  calState.loading = false;
+}
+async function loadMoreCalendar() { await fetchCalendar(); }
+
+function renderCalendar() {
+  const el = document.getElementById('c-list');
+  if (!calState.items.length) { el.innerHTML = '<p class="msg">Sin eventos próximos</p>'; return; }
+  const colors = ['#185FA5','#E37400','#0F6E56','#A32D2D','#534AB7','#993556'];
+  el.innerHTML = calState.items.map((ev, i) => {
+    const start = ev.start?.dateTime || ev.start?.date;
+    const m = moment(start).locale('es');
+    const timeStr = ev.start?.dateTime ? m.format('ddd D MMM, HH:mm') : m.format('ddd D MMM');
+    const color = ev.colorId ? colors[parseInt(ev.colorId) % colors.length] : '#185FA5';
+    return `<div class="row" onclick="openEvent(${i})">
+      <div class="dot" style="background:${color};margin-top:5px;"></div>
+      <div class="row-main">
+        <div class="row-title">${esc((ev.summary||'Sin título').substring(0,48))}</div>
+        <div class="row-sub">${esc(timeStr)}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openEvent(i) {
+  const ev = calState.items[i];
+  if (!ev) return;
+  const title = ev.summary || 'Sin título';
+  openDrawer(title, () => {
+    const start = ev.start?.dateTime || ev.start?.date;
+    const end   = ev.end?.dateTime   || ev.end?.date;
+    const ms = moment(start).locale('es');
+    const me = moment(end).locale('es');
+    const startStr = ev.start?.dateTime ? ms.format('dddd D [de] MMMM [de] YYYY, HH:mm') : ms.format('dddd D [de] MMMM [de] YYYY');
+    const endStr   = ev.end?.dateTime   ? me.format('HH:mm (ddd D MMM)') : me.subtract(1,'day').format('D [de] MMMM');
+    const organizer = ev.organizer?.displayName || ev.organizer?.email || '';
+    const attendees = (ev.attendees || []).map(a => a.displayName || a.email).join(', ');
+    const desc = ev.description ? ev.description.replace(/<[^>]+>/g,'') : '';
+    const loc  = ev.location || '';
+    const link = ev.htmlLink || '';
+
+    let html = `<div class="event-block">
+      ${link ? `<a href="${link}" target="_blank" class="open-ext">Abrir en Google Calendar ↗</a>` : ''}
+      <strong>Fecha</strong><p>${esc(startStr)}</p>
+      <strong>Hora de fin</strong><p>${esc(endStr)}</p>`;
+    if (loc)       html += `<strong>Lugar</strong><p>${esc(loc)}</p>`;
+    if (organizer) html += `<strong>Organizador</strong><p>${esc(organizer)}</p>`;
+    if (attendees) html += `<strong>Asistentes</strong><p>${esc(attendees)}</p>`;
+    if (desc)      html += `<strong>Descripción</strong><p>${esc(desc)}</p>`;
+    html += '</div>';
+    setDrawerBody(html);
+  });
+}
+
+/* ── TASKS ── */
+async function reloadTasks() {
+  document.getElementById('t-list').innerHTML = '<p class="msg">Cargando...</p>';
+  try {
+    const listsData = await gfetch('https://tasks.googleapis.com/tasks/v1/users/@me/lists?maxResults=10');
+    const lists = listsData.items || [];
+    if (!lists.length) { document.getElementById('t-list').innerHTML = '<p class="msg">Sin listas</p>'; return; }
+    const allTasks = await Promise.all(lists.map(l =>
+      gfetch(`https://tasks.googleapis.com/tasks/v1/lists/${l.id}/tasks?maxResults=25&showHidden=false`)
+        .then(d => (d.items || []).map(t => ({...t, _lid: l.id, _list: l.title})))
+    ));
+    const byList = {};
+    allTasks.flat().forEach(t => {
+      if (!byList[t._list]) byList[t._list] = [];
+      byList[t._list].push(t);
+    });
+    let html = '';
+    let hasAny = false;
+    Object.entries(byList).forEach(([listName, tasks]) => {
+      const pending   = tasks.filter(t => t.status !== 'completed');
+      const completed = tasks.filter(t => t.status === 'completed').slice(0, 3);
+      const show = [...pending, ...completed];
+      if (!show.length) return;
+      hasAny = true;
+      html += `<div class="list-header">${esc(listName)}</div>`;
+      show.forEach((t, i) => {
+        const done = t.status === 'completed';
+        const uid = `tc-${esc(t._lid)}-${i}`;
+        html += `<div class="task-row">
+          <div class="task-check ${done?'done':''}" id="${uid}" onclick="toggleTask('${uid}')"></div>
+          <div style="flex:1;min-width:0;">
+            <div class="task-label ${done?'done':''}">${esc(t.title||'Sin título')}</div>
+            ${t.due ? `<div style="font-size:11px;color:var(--tx3);margin-top:1px;">${moment(t.due).locale('es').format('D [de] MMM')}</div>` : ''}
+            ${t.notes ? `<div style="font-size:11px;color:var(--tx2);margin-top:2px;">${esc(t.notes.substring(0,80))}</div>` : ''}
+          </div>
+        </div>`;
+      });
+    });
+    document.getElementById('t-list').innerHTML = hasAny ? html : '<p class="msg">Sin tareas</p>';
+  } catch(e) {
+    document.getElementById('t-list').innerHTML = `<p class="err">Error (${e.message})</p>`;
   }
 }
 
-function fmtDate(ms) {
-  if (!ms) return '';
-  return moment(ms).locale('es').fromNow();
+function toggleTask(uid) {
+  const el = document.getElementById(uid);
+  if (!el) return;
+  el.classList.toggle('done');
+  const label = el.closest('.task-row').querySelector('.task-label');
+  if (label) label.classList.toggle('done');
 }
 
-async function loadGmail(body) {
-  const data = await gfetch('https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=8&labelIds=INBOX');
-  const msgs = data.messages || [];
-  if (!msgs.length) { body.innerHTML = '<p class="loading-msg">Sin mensajes</p>'; return; }
-  const details = await Promise.all(msgs.slice(0,8).map(m =>
-    gfetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${m.id}?format=metadata&metadataHeaders=From&metadataHeaders=Subject&metadataHeaders=Date`)
-  ));
-  const unread = details.filter(d => d.labelIds && d.labelIds.includes('UNREAD')).length;
-  const badge = document.getElementById('badge-gmail');
-  if (unread > 0) { badge.textContent = unread + ' nuevos'; badge.style.display = ''; }
-  else badge.style.display = 'none';
-  body.innerHTML = details.map(d => {
-    const h = (key) => (d.payload.headers.find(h => h.name === key) || {}).value || '';
-    const from = h('From').replace(/<.*>/, '').replace(/"/g,'').trim() || 'Sin remitente';
-    const subj = h('Subject') || '(sin asunto)';
-    const ts = parseInt(d.internalDate);
-    const isUnread = d.labelIds && d.labelIds.includes('UNREAD');
-    const gmailUrl = `https://mail.google.com/mail/u/0/#inbox/${d.id}`;
-    return `<div class="email-item ${isUnread?'email-unread':''}" onclick="window.open('${gmailUrl}','_blank')">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;">
-        <span class="email-sender">${escHtml(from.substring(0,28))}</span>
-        <span class="email-date">${fmtDate(ts)}</span>
-      </div>
-      <span class="email-subject">${escHtml(subj)}</span>
-    </div>`;
-  }).join('');
+/* ── DOCS ── */
+async function reloadDocs() {
+  docsState.items = []; docsState.nextToken = null;
+  document.getElementById('d-list').innerHTML = '<p class="msg">Cargando...</p>';
+  document.getElementById('d-more').style.display = 'none';
+  await fetchDocs();
 }
-
-async function loadCalendar(body) {
-  const now = new Date();
-  const end = new Date(now); end.setDate(end.getDate() + 7);
-  const data = await gfetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${now.toISOString()}&timeMax=${end.toISOString()}&singleEvents=true&orderBy=startTime&maxResults=10`);
-  const items = data.items || [];
-  if (!items.length) { body.innerHTML = '<p class="loading-msg">Sin eventos próximos</p>'; return; }
-  body.innerHTML = items.map(ev => {
-    const start = ev.start.dateTime || ev.start.date;
-    const m = moment(start).locale('es');
-    const timeStr = ev.start.dateTime ? m.format('ddd D, HH:mm') : m.format('ddd D MMM');
-    const color = ev.colorId ? ['#185FA5','#E37400','#0F6E56','#A32D2D','#534AB7','#993556'][parseInt(ev.colorId)%6] : '#185FA5';
-    const calUrl = ev.htmlLink || `https://calendar.google.com/calendar/r`;
-    return `<div class="cal-item" onclick="window.open('${calUrl}','_blank')">
-      <div class="cal-dot" style="background:${color}"></div>
-      <div>
-        <div class="cal-title">${escHtml((ev.summary||'Sin título').substring(0,40))}</div>
-        <div class="cal-time">${timeStr}</div>
-      </div>
-    </div>`;
-  }).join('');
+async function fetchDocs() {
+  if (docsState.loading) return;
+  docsState.loading = true;
+  const btn = document.getElementById('d-more-btn');
+  if (btn) btn.disabled = true;
+  try {
+    let url = "https://www.googleapis.com/drive/v3/files?q=mimeType='application/vnd.google-apps.document'&orderBy=viewedByMeTime desc&pageSize=15&fields=nextPageToken,files(id,name,modifiedTime,webViewLink)";
+    if (docsState.nextToken) url += '&pageToken=' + docsState.nextToken;
+    const data = await gfetch(url);
+    docsState.nextToken = data.nextPageToken || null;
+    docsState.items.push(...(data.files || []));
+    renderDocs();
+    document.getElementById('d-more').style.display = docsState.nextToken ? 'block' : 'none';
+    if (btn) btn.disabled = false;
+  } catch(e) {
+    document.getElementById('d-list').innerHTML = `<p class="err">Error (${e.message})</p>`;
+  }
+  docsState.loading = false;
 }
+async function loadMoreDocs() { await fetchDocs(); }
 
-async function loadTasks(body) {
-  const listsData = await gfetch('https://tasks.googleapis.com/tasks/v1/users/@me/lists?maxResults=5');
-  const lists = listsData.items || [];
-  if (!lists.length) { body.innerHTML = '<p class="loading-msg">Sin listas de tareas</p>'; return; }
-  const allTasks = await Promise.all(lists.slice(0,3).map(l =>
-    gfetch(`https://tasks.googleapis.com/tasks/v1/lists/${l.id}/tasks?maxResults=6&showHidden=false`)
-      .then(d => (d.items || []).map(t => ({...t, _list: l.title})))
-  ));
-  const flat = allTasks.flat().slice(0,12);
-  if (!flat.length) { body.innerHTML = '<p class="loading-msg">Sin tareas pendientes</p>'; return; }
-  body.innerHTML = flat.map((t,i) => {
-    const done = t.status === 'completed';
-    return `<div class="task-item">
-      <div class="task-check ${done?'done':''}" id="tc-${i}" onclick="toggleTask(${i})"></div>
-      <span class="task-label ${done?'done':''}">${escHtml((t.title||'Sin título').substring(0,45))}</span>
-    </div>`;
-  }).join('');
-}
-
-function toggleTask(i) {
-  const check = document.getElementById('tc-'+i);
-  const label = check.nextElementSibling;
-  check.classList.toggle('done');
-  label.classList.toggle('done');
-}
-
-async function loadDocs(body) {
-  const data = await gfetch("https://www.googleapis.com/drive/v3/files?q=mimeType='application/vnd.google-apps.document'&orderBy=viewedByMeTime desc&pageSize=8&fields=files(id,name,modifiedTime,webViewLink)");
-  const files = data.files || [];
-  if (!files.length) { body.innerHTML = '<p class="loading-msg">Sin documentos recientes</p>'; return; }
-  body.innerHTML = files.map(f => `<div class="doc-item" onclick="window.open('${f.webViewLink}','_blank')">
+function renderDocs() {
+  const el = document.getElementById('d-list');
+  if (!docsState.items.length) { el.innerHTML = '<p class="msg">Sin documentos</p>'; return; }
+  el.innerHTML = docsState.items.map((f, i) => `<div class="row" onclick="openDoc(${i})">
     <div class="doc-icon">Doc</div>
-    <div style="min-width:0;">
-      <div class="doc-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escHtml(f.name.substring(0,40))}</div>
-      <div class="doc-date">${fmtDate(new Date(f.modifiedTime).getTime())}</div>
+    <div class="row-main">
+      <div class="row-title">${esc(f.name)}</div>
+      <div class="row-sub">${ago(new Date(f.modifiedTime).getTime())}</div>
     </div>
   </div>`).join('');
 }
 
-function escHtml(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function openDoc(i) {
+  const f = docsState.items[i];
+  if (!f) return;
+  openDrawer(f.name, () => {
+    const embedUrl = `https://docs.google.com/document/d/${f.id}/preview`;
+    setDrawerBody(`
+      <a href="${f.webViewLink}" target="_blank" class="open-ext">Abrir en Google Docs ↗</a>
+      <iframe src="${embedUrl}" class="doc-iframe" style="flex:1;height:0;min-height:400px;" allowfullscreen></iframe>
+    `);
+  });
 }
 
 init();
